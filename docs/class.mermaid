@@ -1,0 +1,104 @@
+classDiagram
+direction LR
+
+class Main {
+  +render(): ReactElement
+}
+
+class QueryClientProvider {
+  +client: QueryClient
+}
+
+class QueryClient {
+  %% Mermaidのクラス図では属性の型にオブジェクトリテラル({})は使えないため、
+  %% 別クラス(DefaultOptions)として表現する
+  +defaultOptions: DefaultOptions
+}
+
+class ReactQueryDevtools
+
+class RouterProvider {
+  +router: Router
+}
+
+class Router {
+  +routeTree
+  +resolve(path): Component
+}
+
+class RootRoute { +path: "/" }
+class IndexRoute { +path: "/" }
+class UsersRoute { +path: "/users" }
+
+class RootLayout {
+  +nav()
+  +outlet()
+}
+
+class TanStackRouterDevtools
+
+class Home
+
+class Users {
+  -columns: ColumnDef~User~[]
+  -sorting: SortingState
+  +fetchUsers(): Promise~User[]~
+  +render(): JSX
+}
+
+class useQuery {
+  +data: User[]
+  +isLoading: boolean
+  +isError: boolean
+}
+
+class useReactTable {
+  +getCoreRowModel()
+  +getSortedRowModel()
+}
+
+class ColumnDef
+class SortingState
+
+class User {
+  +id: number
+  +name: string
+  +email: string
+  %% company もオブジェクトリテラルを使わず別クラスへ
+  +company: Company
+}
+
+class DefaultOptions {
+  +retry: number
+  +refetchOnWindowFocus: boolean
+  +staleTime: number
+}
+
+class Company {
+  +name: string
+}
+
+class JSONPlaceholderAPI {
+  +GET /users: User[]
+}
+
+Main o-- QueryClientProvider
+Main o-- RouterProvider
+Main ..> ReactQueryDevtools
+RouterProvider *-- Router
+Router *-- RootRoute
+RootRoute *-- IndexRoute
+RootRoute *-- UsersRoute
+Router ..> RootLayout
+RootLayout ..> TanStackRouterDevtools
+IndexRoute ..> Home
+UsersRoute ..> Users
+Users o-- useQuery
+Users o-- useReactTable
+useReactTable o-- ColumnDef
+useReactTable o-- SortingState
+useQuery ..> QueryClient
+Users ..> JSONPlaceholderAPI : fetchUsers()
+Users ..> User
+QueryClient o-- DefaultOptions : defaultOptions
+User o-- Company : company
