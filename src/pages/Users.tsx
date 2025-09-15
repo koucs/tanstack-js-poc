@@ -51,9 +51,8 @@ export default function Users() {
 
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p role="alert">Error: {error.message}</p>;
-
+  // フックの呼び出し順を安定させるため、
+  // ローディング中でも常に useReactTable を呼ぶ
   const table = useReactTable({
     data: data ?? [],
     columns,
@@ -66,7 +65,12 @@ export default function Users() {
   return (
     <main>
       <h1>Users</h1>
-      <table role="table" aria-label="users">
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : isError ? (
+        <p role="alert">Error: {error.message}</p>
+      ) : (
+        <table role="table" aria-label="users">
         <thead>
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
@@ -102,11 +106,11 @@ export default function Users() {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      )}
     </main>
   );
 }
 
 // テスト用に個別エクスポート
 export { fetchUsers };
-
